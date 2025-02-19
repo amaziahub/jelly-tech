@@ -12,3 +12,35 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Ingredient {
+  id                Int                @id @default(autoincrement())
+  name              String             @unique
+  supplier          String
+  priceChanges      PriceChange[]
+  recipeIngredients RecipeIngredient[]
+}
+
+model PriceChange {
+  id           Int        @id @default(autoincrement())
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredientId Int
+  changedAt    DateTime
+  price        Float
+}
+
+model Recipe {
+  id          Int                @id @default(autoincrement())
+  name        String             @unique
+  ingredients RecipeIngredient[]
+}
+
+model RecipeIngredient {
+  id           Int        @id @default(autoincrement())
+  recipe       Recipe     @relation(fields: [recipeId], references: [id])
+  recipeId     Int
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredientId Int
+
+  quantity Float
+}
